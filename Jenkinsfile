@@ -1,16 +1,14 @@
 pipeline {
   agent any
   stages {
-    stage('Hello') {
-      steps {
-        sh 'echo Hello World'
-        sh 'echo Hello class'
-        sh 'mkdir'
-      }
-    }
     stage('Test') {
+      agent {
+        docker {
+          image: "node:18-alpine3.16"
+        }
+      }
       steps {
-        sh 'echo Here the Testing command'
+        sh 'npm version'
       }
     }
   }
