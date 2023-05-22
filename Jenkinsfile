@@ -6,7 +6,11 @@ pipeline {
         sh './gradlew clean build'
       }
     }
-
+    post {
+      always {
+        archiveArtifacts artifacts: 'build/reports/tests/test/index.html', followSymlinks: false
+      }
+    }
   }
 }
 
