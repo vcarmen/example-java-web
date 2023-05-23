@@ -22,8 +22,8 @@ pipeline {
     stage('Publish'){
       steps {
         sh 'docker login -u crgv -p ${DOCKER_PASS}'
-        sh 'echo docker tag example-java-web crgv/java-web'
-        sh 'echo docker push crgv/java-web'
+        sh 'docker tag example-java-web crgv/java-web'
+        sh 'docker push crgv/java-web'
       }
     }
 
