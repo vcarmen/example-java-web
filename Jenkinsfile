@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  environment {
+    DOCKER_PASS = credentials('docker_pass')
+  }
   stages {
     stage('Test') {
       steps {
@@ -18,8 +21,8 @@ pipeline {
     }  
     stage('Publish'){
       steps {
-    // docker login
-        sh ' echo docker tag example-java-web crgv/java-web'
+        sh 'docker login -u crgv -p ${DOCKER_PASS}'
+        sh 'echo docker tag example-java-web crgv/java-web'
         sh 'echo docker push crgv/java-web'
       }
     }
