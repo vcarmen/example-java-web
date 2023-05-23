@@ -11,7 +11,17 @@ pipeline {
         }
       }
     }
+    stage('Package'){
+      docker build -t example-java-web .
+    }  
+    stage('Publish'){
+    // docker login
+    // docker tag    
+    // docker push
+    }
+
   }
 }
 
 //Task 4 - Run Unit Test
+//Task 5 - Archive the test report
