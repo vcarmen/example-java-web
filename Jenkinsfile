@@ -12,12 +12,16 @@ pipeline {
       }
     }
     stage('Package'){
-      docker build -t example-java-web .
+      steps {
+        sh 'docker build -t example-java-web .'
+      }
     }  
     stage('Publish'){
+      steps {
     // docker login
-    // docker tag    
-    // docker push
+        sh ' echo docker tag example-java-web crgv/java-web'
+        sh 'echo docker push crgv/java-web'
+      }
     }
 
   }
