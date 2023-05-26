@@ -20,6 +20,12 @@ pipeline {
         sh '/var/jenkins_home/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner   -Dsonar.organization=at20-devops   -Dsonar.projectKey=at20cv   -Dsonar.sources=.   -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.binaries=build'
       }
     }
+    stage('Quality Gate'){
+      // Get the computed result from sonar cloud 
+      // if passed -> continue with the pipeline
+      // if failed -> fail the pipeline
+    }
+
     stage('Package'){
       steps {
         sh 'docker build -t example-java-web .'
@@ -34,13 +40,17 @@ pipeline {
     }
 
   }
-  //post {
+  post {
     //notification
     // message to Slack w pipeline status
     // email to team w pipeline status
-  //}
+    always {
+      sh 'echo clean dangling images'
+    }
+  }
 }
 
 //Task 4 - Run Unit Test
 //Task 5 - Archive the test report
 //Task 6 - Package and Publish the docker image
+//Task 7 - Code Inspection and Quality Gate stages
