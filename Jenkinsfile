@@ -44,7 +44,14 @@ pipeline {
 
     stage('DeployToDev'){
       steps {
-        sh 'docker compose up -d'
+        sh 'docker-compose up -d'
+        sh 'echo command to run smoke test'
+      }
+    }
+
+    stage('DeployToAUTO'){
+      steps {
+        sh 'echo command here to deploy to AUTO '
       }
     }
 
