@@ -21,6 +21,9 @@ pipeline {
       }
     }
     stage('Quality Gate'){
+      steps {
+        sh 'echo quality gate'
+      }
       // Get the computed result from sonar cloud 
       // if passed -> continue with the pipeline
       // if failed -> fail the pipeline
