@@ -1,0 +1,7 @@
+version: '3.7'
+
+services:
+  webApp:
+    image: crgv/java-web
+    ports:
+      - "8081:8080"
