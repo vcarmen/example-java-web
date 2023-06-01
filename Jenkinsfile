@@ -37,7 +37,7 @@ pipeline {
     }  
     stage('Publish'){
       steps {
-        sh 'echo %GIT_COMMIT%'
+        sh 'echo $GIT_COMMIT'
         //sh 'export TAG=$(git log --pretty=format:'%h' -n 1)'
         //sh 'docker login -u crgv -p ${DOCKER_PASS}'
         //sh 'docker tag example-java-web crgv/java-web:${TAG_VERSION}'
