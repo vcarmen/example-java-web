@@ -4,10 +4,12 @@ pipeline {
     DOCKER_PASS = credentials('docker_pass')
     SONAR_TOKEN = credentials('sonar_token')
     TAG_VERSION = "1.0"
+    GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
   }
   stages {
     stage('Test') {
       steps {
+        sh 'echo ${GIT_COMMIT_HASH}'
         sh 'echo ./gradlew clean build test'
       }
       //post {
