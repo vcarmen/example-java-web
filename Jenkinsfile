@@ -3,21 +3,22 @@ pipeline {
   environment {
     DOCKER_PASS = credentials('docker_pass')
     SONAR_TOKEN = credentials('sonar_token')
+    TAG_VERSION = "1.0"
   }
   stages {
     stage('Test') {
       steps {
-        sh './gradlew clean build'
+        sh 'echo ./gradlew clean build'
       }
-      post {
-        always {
-          archiveArtifacts artifacts: 'build/reports/tests/test/index.html', followSymlinks: false
-        }
-      }
+      //post {
+      //  always {
+      //    archiveArtifacts artifacts: 'build/reports/tests/test/index.html', followSymlinks: false
+      //  }
+      //}
     }
     stage('CodeInspection'){
       steps {
-        sh '/var/jenkins_home/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner   -Dsonar.organization=at20-devops   -Dsonar.projectKey=at20cv   -Dsonar.sources=.   -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.binaries=build'
+        sh 'echo /var/jenkins_home/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner   -Dsonar.organization=at20-devops   -Dsonar.projectKey=at20cv   -Dsonar.sources=.   -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.binaries=build'
       }
     }
     stage('Quality Gate'){
@@ -36,15 +37,17 @@ pipeline {
     }  
     stage('Publish'){
       steps {
-        sh 'docker login -u crgv -p ${DOCKER_PASS}'
-        sh 'docker tag example-java-web crgv/java-web'
-        sh 'docker push crgv/java-web'
+        sh 'echo %GIT_COMMIT%'
+        //sh 'export TAG=$(git log --pretty=format:'%h' -n 1)'
+        //sh 'docker login -u crgv -p ${DOCKER_PASS}'
+        //sh 'docker tag example-java-web crgv/java-web:${TAG_VERSION}'
+        //sh 'docker push crgv/java-web:${TAG_VERSION}'
       }
     }
 
     stage('DeployToDev'){
       steps {
-        sh 'docker-compose up -d'
+        //sh 'docker-compose -e TAG_VERSION=${TAG_VERSION} up -d '
         sh 'echo command to run smoke test'
       }
     }
@@ -52,6 +55,7 @@ pipeline {
     stage('DeployToAUTO'){
       steps {
         sh 'echo command here to deploy to AUTO '
+        sh 'echo command to run automation tests'
       }
     }
 
