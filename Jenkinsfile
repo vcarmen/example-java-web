@@ -4,11 +4,12 @@ pipeline {
     DOCKER_PASS = credentials('docker_pass')
     SONAR_TOKEN = credentials('sonar_token')
     GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
+    //GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
   }
   stages {
     stage('Test') {
       steps {
-        sh 'echo ./gradlew clean build test'
+        sh './gradlew clean build test'
       }
       post {
         always {
@@ -45,7 +46,7 @@ pipeline {
 
     stage('DeployToDev'){
       steps {
-        //sh 'docker-compose -e TAG_VERSION=${TAG_VERSION} up -d '
+        sh 'docker-compose -e TAG_VERSION=${GIT_COMMIT_HASH} up -d '
         sh 'echo command to run smoke test'
       }
     }
