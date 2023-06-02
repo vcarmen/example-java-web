@@ -2,6 +2,6 @@ version: '3.7'
 
 services:
   webApp:
-    image: crgv/java-web
+    image: crgv/java-web:${TAG_VERSION}
     ports:
       - "8081:8080"
