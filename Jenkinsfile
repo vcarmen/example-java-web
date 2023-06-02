@@ -46,7 +46,7 @@ pipeline {
 
     stage('DeployToDev'){
       steps {
-        sh 'export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose up -d '
+        sh 'export TAG_VERSION="${GIT_COMMIT_HASH}" && docker-compose up -d '
         sh 'echo command to run smoke test'
       }
     }
