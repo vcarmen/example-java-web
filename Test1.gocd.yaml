@@ -1,0 +1,57 @@
+format_version: 10
+pipelines:
+  Test1:
+    group: AT20Group
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    materials:
+      git-91ca77d:
+        git: https://github.com/vcarmen/example-java-web.git
+        username: vcarmen
+        shallow_clone: false
+        auto_update: true
+        branch: task3
+        encrypted_password: AES:j6vRnELxtmqgZCEnL1NM/Q==:oidD1gqh0PazGxxSCUEYsg==
+    stages:
+    - Test:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          unit-test:
+            timeout: 0
+            tasks:
+            - exec:
+                arguments:
+                - hello
+                - world
+                command: echo
+                run_if: passed
+          code_coverage:
+            timeout: 0
+            tasks:
+            - exec:
+                arguments:
+                - -la
+                command: ls
+                run_if: passed
+    - code-inspection:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          sonar:
+            timeout: 0
+            tasks:
+            - exec:
+                arguments:
+                - sonar-scanner command here
+                command: echo
+                run_if: passed
