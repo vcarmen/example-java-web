@@ -30,6 +30,13 @@ pipelines:
             - script: |
                 ./gradlew clean build
                 ls -la
+            artifacts:
+            - test:
+                source: build/test-results/test/*.xml
+                destination: xml_report
+            - build:
+                source: build/reports/tests/test/index.html
+                destination: html_report
     - code-inspection:
         fetch_materials: true
         keep_artifacts: false
