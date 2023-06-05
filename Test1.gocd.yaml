@@ -28,7 +28,8 @@ pipelines:
             - ubuntu
             tasks:
             - script: |
-                echo hello world
+                ./gradlew clean build
+                ls -la
     - code-inspection:
         fetch_materials: true
         keep_artifacts: false
