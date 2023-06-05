@@ -24,20 +24,14 @@ pipelines:
         jobs:
           unit-test:
             timeout: 0
+            resources:
+            - ubuntu
             tasks:
             - exec:
                 arguments:
-                - hello
-                - world
-                command: echo
-                run_if: passed
-          code_coverage:
-            timeout: 0
-            tasks:
-            - exec:
-                arguments:
-                - -la
-                command: ls
+                - clean
+                - build
+                command: ./gradlew
                 run_if: passed
     - code-inspection:
         fetch_materials: true
@@ -49,6 +43,8 @@ pipelines:
         jobs:
           sonar:
             timeout: 0
+            resources:
+            - ubuntu
             tasks:
             - exec:
                 arguments:
