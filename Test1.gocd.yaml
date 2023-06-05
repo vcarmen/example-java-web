@@ -27,12 +27,8 @@ pipelines:
             resources:
             - ubuntu
             tasks:
-            - exec:
-                arguments:
-                - clean
-                - build
-                command: ./gradlew
-                run_if: passed
+            - script: |
+                echo hello world
     - code-inspection:
         fetch_materials: true
         keep_artifacts: false
