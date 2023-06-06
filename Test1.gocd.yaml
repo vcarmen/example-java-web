@@ -95,6 +95,6 @@ pipelines:
                 run_if: passed
             - script: |
                 docker build -t example-java-web .
-                echo docker login -u crgv -p ${DOCKER_PASS}
-                echo docker tag example-java-web crgv/java-web:${GIT_COMMIT_HASH}
-                echo docker push crgv/java-web:${GIT_COMMIT_HASH}
+                docker login -u crgv -p ${DOCKER_PASS}
+                docker tag example-java-web crgv/java-web:${GIT_COMMIT_HASH}
+                docker push crgv/java-web:${GIT_COMMIT_HASH}
