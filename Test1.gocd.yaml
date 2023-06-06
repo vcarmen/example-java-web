@@ -9,6 +9,7 @@ pipelines:
       GIT_COMMIT_HASH: 1.2
     secure_variables:
       SONAR_TOKEN: AES:ty1rlRa87YaJIevQ0kcpeQ==:4e9nglRpfGuswJ0ghVMVQ05Ct7fzcdGztAYhv47+STd65JXVVtd1Imdpm5gwLzv9
+      DOCKER_PASS: AES:jflkjskfjdslkfjkdsljfkdsjf==fdsf=
     materials:
       git-91ca77d:
         git: https://github.com/vcarmen/example-java-web.git
@@ -43,6 +44,8 @@ pipelines:
                 destination: html_report
             - build:
                 source: build
+            - build:
+                source: Dockerfile
     - code-inspection:
         fetch_materials: false
         keep_artifacts: false
@@ -81,7 +84,12 @@ pipelines:
             - fetch:
                 is_file: false
                 source: build
-                destination: build
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
+                is_file: true
+                source: Dockerfile
                 stage: Test
                 job: unit-test
                 run_if: passed
