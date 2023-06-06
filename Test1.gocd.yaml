@@ -65,3 +65,30 @@ pipelines:
             - script: |
                 ls -la 
                 /godata/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner  -Dsonar.organization=at20-devops   -Dsonar.projectKey=at20cv   -Dsonar.sources=.   -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.binaries=build
+    - PackageAndPublish:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          docker:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - fetch:
+                is_file: false
+                source: build
+                destination: build
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - script: |
+                ls -la
+                docker info
+                echo docker build -t example-java-web .
+                echo docker login -u crgv -p ${DOCKER_PASS}
+                echo docker tag example-java-web crgv/java-web:${GIT_COMMIT_HASH}
+                echo docker push crgv/java-web:${GIT_COMMIT_HASH}
