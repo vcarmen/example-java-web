@@ -94,9 +94,7 @@ pipelines:
                 job: unit-test
                 run_if: passed
             - script: |
-                ls -la
-                docker info
-                echo docker build -t example-java-web .
+                docker build -t example-java-web .
                 echo docker login -u crgv -p ${DOCKER_PASS}
                 echo docker tag example-java-web crgv/java-web:${GIT_COMMIT_HASH}
                 echo docker push crgv/java-web:${GIT_COMMIT_HASH}
