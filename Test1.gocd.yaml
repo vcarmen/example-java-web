@@ -8,7 +8,7 @@ pipelines:
     environment_variables:
       GIT_COMMIT_HASH: 1.2
     secure_variables:
-      SONAR_TOKEN: AES:jFKkySRN11+lqcL6/st7Fg==:SYuOXZ2lzVf16fKlUvWcPw==
+      SONAR_TOKEN: AES:ty1rlRa87YaJIevQ0kcpeQ==:4e9nglRpfGuswJ0ghVMVQ05Ct7fzcdGztAYhv47+STd65JXVVtd1Imdpm5gwLzv9
     materials:
       git-91ca77d:
         git: https://github.com/vcarmen/example-java-web.git
