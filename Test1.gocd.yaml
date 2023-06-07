@@ -1,0 +1,163 @@
+format_version: 10
+pipelines:
+  Test1:
+    group: AT20Group
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    environment_variables:
+      GIT_COMMIT_HASH: 1.2
+    secure_variables:
+      SONAR_TOKEN: AES:ty1rlRa87YaJIevQ0kcpeQ==:4e9nglRpfGuswJ0ghVMVQ05Ct7fzcdGztAYhv47+STd65JXVVtd1Imdpm5gwLzv9
+      DOCKER_PASS: AES:p/kVIIobE2VL5O156ptGkw==:zxZody/3sdlAne+F9/xQqQ==
+    materials:
+      git-91ca77d:
+        git: https://github.com/vcarmen/example-java-web.git
+        username: vcarmen
+        shallow_clone: false
+        auto_update: true
+        branch: task3
+        encrypted_password: AES:j6vRnELxtmqgZCEnL1NM/Q==:oidD1gqh0PazGxxSCUEYsg==
+    stages:
+    - Test:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          unit-test:
+            timeout: 0
+            resources:
+            - ubuntu
+            tasks:
+            - script: |
+                ./gradlew clean build
+                ls -la
+            artifacts:
+            - test:
+                source: build/test-results/test/*.xml
+                destination: xml_report
+            - build:
+                source: build/reports/tests/test/index.html
+                destination: html_report
+            - build:
+                source: build
+            - build:
+                source: Dockerfile
+            - build:
+                source: docker-compose.yaml
+    - code-inspection:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          sonar:
+            timeout: 0
+            resources:
+            - ubuntu
+            tasks:
+            - fetch:
+                is_file: false
+                source: build
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - script: |
+                ls -la 
+                /godata/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner  -Dsonar.organization=at20-devops   -Dsonar.projectKey=at20cv   -Dsonar.sources=.   -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.binaries=build
+    - PackageAndPublish:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          docker:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - fetch:
+                is_file: false
+                source: build
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
+                is_file: true
+                source: Dockerfile
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
+                is_file: true
+                source: docker-compose.yaml
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - script: |
+                docker build -t example-java-web .
+                docker login -u crgv -p ${DOCKER_PASS}
+                docker tag example-java-web crgv/java-web:${GIT_COMMIT_HASH}
+                docker push crgv/java-web:${GIT_COMMIT_HASH}
+            artifacts:
+            - build:
+                source: docker-compose.yaml
+
+  Acceptance:
+    group: AT20Group
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    environment_variables:
+      GIT_COMMIT_HASH: 1.2
+    materials:
+      Test1:
+        pipeline: Test1
+        stage: PackageAndPublish
+    stages:
+    - DeployToDev:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          deployToDev:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - fetch:
+                pipeline: Test1
+                stage: PackageAndPublish
+                job: docker
+                source: docker-compose.yaml
+                is_file: true
+                run_if: passed
+            - script: |
+                echo deploy here
+                ls -la
+                export TAG_VERSION="${GIT_COMMIT_HASH}" && docker-compose up -d
+    - Smoke:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          test:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - script: |
+                echo command to run smoke test
