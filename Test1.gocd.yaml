@@ -46,6 +46,8 @@ pipelines:
                 source: build
             - build:
                 source: Dockerfile
+            - build:
+                source: docker-compose.yaml
     - code-inspection:
         fetch_materials: false
         keep_artifacts: false
@@ -90,6 +92,12 @@ pipelines:
             - fetch:
                 is_file: true
                 source: Dockerfile
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
+                is_file: true
+                source: docker-compose.yaml
                 stage: Test
                 job: unit-test
                 run_if: passed
