@@ -99,4 +99,5 @@ pipelines:
                 docker tag example-java-web crgv/java-web:${GIT_COMMIT_HASH}
                 docker push crgv/java-web:${GIT_COMMIT_HASH}
             artifacts:
-              source: docker-compose.yaml
+            - build:
+                source: docker-compose.yaml
